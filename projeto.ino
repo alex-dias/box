@@ -5,8 +5,12 @@ SoftwareSerial bluetooth(0, 1); //TX, RX (Bluetooth)
   
 const int ledPin1 = 4;
 const int ledPin2 = 13;
+
 const int sensor1 = A1;
 const int sensor2 = A2;
+
+const int buzzer = 2;
+
 int incomingByte;
 int sensorValue;
 int sensorValue2;
@@ -58,5 +62,20 @@ void loop() {
     delay(200);
   }
 }
+
+void piscaLed(int nomePorta, int tempo){
+  digitalWrite(nomePorta, HIGH);
+  delay(tempo);
+  digitalWrite(nomePorta, LOW);
+  delay(tempo);
+}
+
+void beep(int nomePorta, int frequencia, int tempo){
+  tone(nomePorta, frequencia); 
+  delay(tempo);       
+  noTone(nomePorta);     
+  delay(tempo);        
+}
+
 
 
