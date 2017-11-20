@@ -18,6 +18,12 @@ int sensorValue2;
 int vetorDePecas[10] = {};
 int contador = 1;
 
+const int nLeituras = 100;
+int leitura1;
+int leitura2;
+int media1 = 0;
+int media2 = 0;
+
 void setup() {
   //Initialize the software serial
   bluetooth.begin(9600);
@@ -25,68 +31,77 @@ void setup() {
   pinMode(ledPin1, OUTPUT);
   pinMode(ledPin2, OUTPUT);
 
-
 }
 
 void loop() {
-  sensorValue = analogRead(sensor1);
-  sensorValue2 = analogRead(sensor2);
-  
-  if((sensorValue < 150) && (sensorValue2 < 150) && (vetorDePecas[(contador - 1)] == 0)){
+  for(int i = 0; i < nLeituras; i++){
+    leitura1 = analogRead(sensor1);
+    leitura2 = analogRead(sensor2);
+
+    media1 = media1 + leitura1/nLeituras;
+    media2 = media2 + leitura2/nLeituras;
+
+    delay(2);
+  }
+
+  if((media1 < 500) && (media2 < 500) && (vetorDePecas[(contador - 1)] == 0)){
     vetorDePecas[contador] = 1;
 
     digitalWrite(ledPin1, HIGH);
     digitalWrite(ledPin2, HIGH);
     
     bluetooth.println("Frente");
-    bluetooth.println(vetorDePecas[contador]);
-    bluetooth.println(contador);
+    bluetooth.println(media1);
+    bluetooth.println(media2);
     delay(200);
 
-    contador ++;
+    contador++;
   }
 
-  if((sensorValue < 150) && (sensorValue2 > 150) && (vetorDePecas[(contador - 1)] == 0)){
+  if((media1 < 300) && (media2 > 300) && (vetorDePecas[(contador - 1)] == 0)){
     vetorDePecas[contador] = 2;
 
     digitalWrite(ledPin1, HIGH);
     digitalWrite(ledPin2, LOW);
     
     bluetooth.println("Esquerda");
-    bluetooth.println(vetorDePecas[contador]);
-    bluetooth.println(contador);
+    bluetooth.println(media1);
+    bluetooth.println(media2);
     delay(200);
-    
-    contador ++;
+
+    contador++;
   }
 
-  if((sensorValue > 150) && (sensorValue2 < 150) && (vetorDePecas[(contador - 1)] == 0)){
+  if((media1 > 300) && (media2 < 300) && (vetorDePecas[(contador - 1)] == 0)){
     vetorDePecas[contador] = 3;
 
     digitalWrite(ledPin1, LOW);
     digitalWrite(ledPin2, HIGH);
     
     bluetooth.println("Direita");
-    bluetooth.println(vetorDePecas[contador]);
-    bluetooth.println(contador);
+    bluetooth.println(media1);
+    bluetooth.println(media2);
     delay(200);
     
-    contador ++;
+    contador++;
   }
 
-  if((sensorValue > 150) && (sensorValue2 > 150) && (vetorDePecas[(contador - 1)] != 0)){
+  if((media1 > 300) && (media2 > 300) && (vetorDePecas[(contador - 1)] != 0)){
     vetorDePecas[contador] = 0;
 
     digitalWrite(ledPin1, LOW);
     digitalWrite(ledPin2, LOW);
     
     bluetooth.println("Vazio");
-    bluetooth.println(vetorDePecas[contador]);
-    bluetooth.println(contador);
+    bluetooth.println(media1);
+    bluetooth.println(media2);
     delay(200);
 
-    contador ++;
+    contador++;
   }
+
+  media1 = 0;
+  media2 = 0;
 
   /*
 
@@ -134,6 +149,3 @@ void beep(int nomePorta, int frequencia, int tempo){
   noTone(nomePorta);     
   delay(tempo);        
 }
-
-
-
